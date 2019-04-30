@@ -2,7 +2,7 @@ import serial
 import time
 
 def get_board_port():
-    windows_ports = ['COM%s' % (i + 1) for i in range(4,256)]
+    windows_ports = ['COM%s' % (i + 1) for i in range(1,256)]
     open_ports = []
 
     for port in windows_ports:
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     s = serial.Serial(board_port, 115200, timeout=0)
     while True:
-        print("Change Orientation or Color?\r\n")
+        print("Change Orientation or Color?")
         command = input()
 
         if command == 'C' or command == 'Color' or command == 'c':
