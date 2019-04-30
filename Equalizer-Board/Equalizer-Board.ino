@@ -39,6 +39,7 @@ enum Board_Color {
     Purple, 
     White,
     Rainbow,
+    RWB,
     Pink
   };
 
@@ -435,8 +436,27 @@ uint32_t colorChoose(int band){
     case Pink:
       return pink; 
       break;
+
+    case RWB:
+      return colorChooseRWB(band);
     
   }
+}
+
+uint32_t colorChooseRWB(int band){
+  if (band % 3 == 0)
+  {
+    return red; 
+  }
+  else if (band % 3 == 1)
+  {
+    return white; 
+  }
+  else if (band % 3 == 2)
+  {
+    return blue; 
+  }
+  
 }
 
 uint32_t colorChooseRainbow(int band){
