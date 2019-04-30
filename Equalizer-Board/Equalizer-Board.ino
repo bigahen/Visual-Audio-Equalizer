@@ -97,7 +97,7 @@ void setup() {
   digitalWrite(strobePin, HIGH);
 
   board_color = Rainbow; 
-  board_orientation = VerticalMirror; 
+  board_orientation = Vertical; 
 }
 
 void loop() {
