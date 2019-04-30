@@ -374,14 +374,14 @@ void setHorizontalAverageLeds(int average_intensity){
     for (int band = 7; band <= 8; band++){
       for(int j=0; j < average_intensity; j++){
         if(j == 0){
-          strip.setPixelColor(2*band, pink);
-          strip.setPixelColor(2*band+1, pink);
+          strip.setPixelColor(2*band, colorChoose(7));
+          strip.setPixelColor(2*band+1, colorChoose(7));
         }else if(j % 2 == 0){
-          strip.setPixelColor(36 * (j / 2) + 2*band, pink);
-          strip.setPixelColor(36 * (j / 2) + 2*band + 1, pink);
+          strip.setPixelColor(36 * (j / 2) + 2*band, colorChoose(7));
+          strip.setPixelColor(36 * (j / 2) + 2*band + 1, colorChoose(7));
         }else{
-          strip.setPixelColor(36 * (j / 2 + 1) - 2*band - 1, pink);
-          strip.setPixelColor(36 * (j / 2 + 1) - 2*band - 2, pink);
+          strip.setPixelColor(36 * (j / 2 + 1) - 2*band - 1, colorChoose(7));
+          strip.setPixelColor(36 * (j / 2 + 1) - 2*band - 2, colorChoose(7));
         }
       }
       
@@ -462,6 +462,10 @@ uint32_t colorChooseRainbow(int band){
     case 6:
       return white;
       break;
+    // This can only be used by the average 
+    case 7:
+      return pink;
+      break; 
 
    default: 
       return off; 
