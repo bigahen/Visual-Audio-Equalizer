@@ -2,3 +2,7 @@
 Visual Audio Equalizer using 18x30 NeoPixels, Arduino with ATMega2560, and MSGEQ7 IC 
 
 The python script currently only supports windows PCs and is written for python 3.6+. Once connected basic commands will change the LED board configuration.
+
+A demonstration of the board can be found here: 
+
+https://youtu.be/SNVFF_wY7DM
