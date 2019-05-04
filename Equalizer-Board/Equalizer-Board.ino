@@ -2,9 +2,11 @@
  * LED Visual Equilizer Code for 18 x 30 Neopixal Grid 
  * 
  * Author: Austin Hendrix
- * Date: 18/6/18
+ * Date: 3/5/18
  * 
  */
+
+#include <EEPROM.h>
  
  //Variables Related to Neopixals and Audio Input
 #include <Adafruit_NeoPixel.h>
@@ -12,6 +14,10 @@
 #define NUM_LEDS  540
 #define MAX_BRIGHTNESS 25
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_CONTROL_PIN, NEO_GRB + NEO_KHZ800);
+
+// EEPROM Addresses for the latest orientation and color scheme
+#define ORIENTATION_ADDRESS 0
+#define COLOR_ADDRESS 1
 
 //Define Color Constants
 uint32_t red = strip.Color(255, 0, 0);
@@ -96,8 +102,10 @@ void setup() {
   digitalWrite(resetPin, LOW);
   digitalWrite(strobePin, HIGH);
 
-  board_color = Rainbow; 
-  board_orientation = Vertical; 
+  loadSaveState(); 
+  
+  //board_color = Rainbow; 
+  //board_orientation = Vertical; 
 }
 
 void loop() {
@@ -153,6 +161,9 @@ void updateColor(){
    }else{
           board_color = int(board_color)+1; 
    }
+
+   updateColorSaveState();
+   
 }
 
 void updateOrientation(){
@@ -161,6 +172,9 @@ void updateOrientation(){
     }else{
           board_orientation = int(board_orientation)+1; 
     } 
+
+    updateOrientationSaveState();
+    
 }
 
 void updateLEDs(){
@@ -234,7 +248,6 @@ void updateLEDsHorizontal(){
   strip.show();
   //delay(30);
 }
-
 
 void updateLEDsVeritcal(){
    //Toggle Reset Pin so MSGEQ7 gives fresh input
@@ -491,3 +504,32 @@ uint32_t colorChooseRainbow(int band){
       return off; 
   }
 }
+
+void loadSaveState(){
+
+  uint8_t orientation = EEPROM.read(ORIENTATION_ADDRESS);
+  uint8_t color = EEPROM.read(COLOR_ADDRESS); 
+
+  if(orientation > VerticalMirror){
+    orientation = VerticalMirror; 
+  }
+
+  if(color > Pink){
+    color = Rainbow; 
+  }
+
+  board_orientation = orientation;
+  board_color = color; 
+  
+}
+
+void updateColorSaveState(){
+
+    EEPROM.write(COLOR_ADDRESS, int(board_color)); 
+}
+
+void updateOrientationSaveState(){
+    EEPROM.write(ORIENTATION_ADDRESS, int(board_orientation));
+  
+}
+
