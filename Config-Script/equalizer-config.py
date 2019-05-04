@@ -2,7 +2,11 @@ import serial
 import time
 
 def get_board_port():
-    windows_ports = ['COM%s' % (i + 1) for i in range(1,256)]
+    """
+    Function to search for open COM port with board
+    :return: value of com port or none
+    """
+    windows_ports = ['COM%s' % (i + 1) for i in range(1, 256)]
     open_ports = []
 
     for port in windows_ports:
@@ -25,8 +29,50 @@ def get_board_port():
     return None
 
 
-if __name__ == "__main__":
+def transmit_packet(serial_port, data):
+    """
+    Ensures transmission of packet to board using 3 way handshake
+    :return: None
+    """
 
+    # Loop to ensure packet transmits
+    while True:
+        # Wait for board to check in
+        while serial_port.inWaiting() == 0:
+            pass
+
+        # Read out the incoming message in case it is needed later
+        incoming_message = serial_port.readline()
+        if incoming_message != b'Board Checking In\r\n':
+            # print(f"Received invalid checkin!{incoming_message}")
+            continue
+
+        # Flush input, write data, then flush to ensure data is written
+        serial_port.reset_input_buffer()
+        serial_port.write(data)
+        serial_port.flush()
+        # print(f'Command Data: {output_bytes}')
+        # print('Command Sent')
+
+        # Wait for board to respond with ack
+        while serial_port.inWaiting() == 0:
+            pass
+
+        # Read ack
+        ack_message = serial_port.readline()
+        # print(f'ACK Message: {ack_message}')
+
+        # Continue to try again if failure
+        if ack_message == b'Board Checking In\r\n':
+            continue
+
+        # If ack is equal to the command sent, message was receive so go back to menu
+        if ack_message[:-2] == data:
+            print('Command acknowledged!')
+            break
+
+
+if __name__ == "__main__":
     board_port = None
 
     # Main Loop of Program
@@ -49,47 +95,10 @@ if __name__ == "__main__":
             print("Invalid command!")
             continue
 
-        #output_bytes = bytes(command_phrase, 'utf-8')
+        transmit_packet(s, output_bytes)
 
         # Loop to ensure command was received
-        while True:
-            # Wait for board to check in
-            while s.inWaiting() == 0:
-                pass
 
-            # Read out the incoming message in case it is needed later
-            incoming_message = s.readline()
-            if incoming_message != b'Board Checking In\r\n':
-                #print(f"Received invalid checkin!{incoming_message}")
-                continue
-
-            #
-
-            # Create command phrase
-            s.reset_input_buffer()
-            s.write(output_bytes)
-            s.flush()
-            #print(f'Command Data: {output_bytes}')
-            #print('Command Sent')
-
-            # Wait for board to respond with ack
-            while s.inWaiting() == 0:
-                pass
-
-            # Read ack
-            ack_message = s.readline()
-            #print(f'ACK Message: {ack_message}')
-            # Break if message failed
-            if ack_message == b'Board Checking In\r\n':
-                continue
-
-
-            # If ack is equal to the command sent, message was receive so go back to menu
-            if ack_message[:-2] == output_bytes:
-                print('Command acknowledged!')
-                break
-
-        #s.close()
 
 
 
